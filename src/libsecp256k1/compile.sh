@@ -2,8 +2,6 @@
 
 set -e
 
-. $(dirname "$0")/helper.sh || (echo "Could not source helper.sh" && exit 1)
-
 wd=`pwd`
 
 DLL_TARGET_DIR="$wd/compiled/unix" ./make_libsecp265k1.sh
