@@ -13,7 +13,7 @@ class StarterPkg:
 		Modern way to get package data is with pkgutil.get_data(). See this post:
 		https://stackoverflow.com/questions/6028000/how-to-read-a-static-file-from-inside-a-python-package/58941536#58941536
 		"""
-		pkgdata = pkgutil.get_data(__name__, 'lib/default.json')
+		pkgdata = pkgutil.get_data(__name__, 'data/default.json')
 		return json.loads(pkgdata.decode('utf-8'))
 
 	def get_response(self):
