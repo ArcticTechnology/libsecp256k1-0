@@ -1,10 +1,6 @@
-FROM ubuntu:18.04
-COPY . /app
-WORKDIR /app
-#WORKDIR /root
+FROM ubuntu:20.04
+COPY . /libsecp
+WORKDIR /libsecp
 
-#ADD prepare.sh ./
-#RUN bash ./prepare.sh && rm -rf /var/lib/apt/lists/*
-
-#ADD build.sh ./
-CMD bash ./require.sh
+RUN bash ./require.sh && rm -rf /var/lib/apt/list/*
+CMD bash ./compiler.sh

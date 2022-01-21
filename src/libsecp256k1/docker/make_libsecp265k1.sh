@@ -36,7 +36,12 @@ set -e
 
 . $(dirname "$0")/helper.sh || (echo "Could not source helper.sh" && exit 1)
 
-wd=`pwd`
+if [ -n "$DLL_WORKING_DIR" ] ; then
+	wd="$DLL_WORKING_DIR"
+else
+	wd=`pwd`
+fi
+
 COMPILED="$wd/compiled"
 BUILD="$COMPILED/build"
 DIST="$COMPILED/dist"
