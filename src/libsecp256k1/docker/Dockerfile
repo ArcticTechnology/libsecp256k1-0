@@ -3,4 +3,6 @@ COPY . /libsecp
 WORKDIR /libsecp
 
 RUN bash ./require.sh && rm -rf /var/lib/apt/list/*
+RUN ["chmod", "+x", "compiler.sh"]
+RUN ["chmod", "+x", "make_libsecp265k1.sh"]
 CMD bash ./compiler.sh
