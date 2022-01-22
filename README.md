@@ -1,4 +1,5 @@
 # Python Starter Package
+
 This is a basic python starter package to be used as a template for creating your own python packages. See "PythonStarterPackage Setup Guide.md" in ```doc/``` for a detailed explanation of the package resources.
 * Github repo: https://github.com/ArcticTechnology/PythonStarterPackage
 * PyPi: https://pypi.org/project/PythonStarterPackage/
