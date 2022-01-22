@@ -1,7 +1,4 @@
-from concurrent.futures import process
-from re import sub
 import shlex; import subprocess
-from turtle import st
 
 class DockerHelper:
 	# Docker:
@@ -20,9 +17,10 @@ class DockerHelper:
 		command = shlex.split('docker build {a} {p}'.format(a=arglex,p=path))
 		process = subprocess.run(command,
 			stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		print(process.stdout.decode())
 		returncode = process.returncode
 		if returncode == 0:
-			return {'status': 200, 'message': 'Docker build successful.'}
+			return {'status': 200, 'message': 'Docker build successful.', 'errorcode': None}
 		else:
-			return {'status': 400, 'message': 'Error: Failed to build Docker.'}
+			return {'status': 400, 'message': 'Error: Failed to build Docker.', 'errorcode': str(process.stderr)}
 
