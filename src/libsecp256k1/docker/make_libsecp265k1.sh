@@ -96,4 +96,3 @@ info "Building $pkgname..."
 		info "$dlname has been created in $DIST"
 	fi
 )
-

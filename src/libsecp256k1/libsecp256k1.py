@@ -1,10 +1,12 @@
 import os
 import sys
 import ctypes
+import platform
+from os.path import isdir
 from ctypes import (
 	c_int, c_uint, c_char_p, c_size_t, c_void_p
 )
-from .utils.dockerhelper import DockerHelper
+from .utils.docker import Docker
 from .utils.crawler import Crawler
 
 SECP256K1_FLAGS_TYPE_MASK = ((1 << 8) - 1)
@@ -24,39 +26,67 @@ SECP256K1_CONTEXT_NONE = (SECP256K1_FLAGS_TYPE_CONTEXT)
 SECP256K1_EC_COMPRESSED = (SECP256K1_FLAGS_TYPE_COMPRESSION | SECP256K1_FLAGS_BIT_COMPRESSION)
 SECP256K1_EC_UNCOMPRESSED = (SECP256K1_FLAGS_TYPE_COMPRESSION)
 
-class LibModuleMissing(Exception): pass
-
 class Libsecp265k1:
 
-	def get_lib_path(self, filepath: str):
+	def get_lib_path(self, filepath: str) -> str:
 		return Crawler.joinpath(os.path.dirname(__file__), filepath)
 
-	def unix(self):
+	def unix(self) -> str:
 		return self.get_lib_path('compiled/unix/libsecp256k1.so.0')
 
-	def win32(self):
-		return self.get_lib_path('compiled/win32/libsecp256k1-0.dll')
+	def win32bit(self) -> str:
+		return self.get_lib_path('compiled/win32bit/libsecp256k1-0.dll')
 
-	def win64(self):
-		return self.get_lib_path('compiled/win64/libsecp256k1-0.dll')
+	def win64bit(self) -> str:
+		return self.get_lib_path('compiled/win64bit/libsecp256k1-0.dll')
 
-	def docker_compile(self):
-		# Docker:
-		#sudo apt-get update
-		#sudo apt install docker.io
+	def docker_compile(self, interactive: bool = False) -> dict:
+		if interactive == True:
+			os.system('clear')
+			print(' ')
+			print('What directory do you want docker to compile to?')
+			outpath = input()
+			if outpath == '':
+				os.system('clear')
+				message = 'Exited, no action taken.'; print(message)
+				return {'status': 400, 'message': message}
+			compiledpath = Crawler.joinpath(outpath, 'compiled')
+			if isdir(compiledpath):
+				print(' ')
+				print('Compiled directory would you like to overwrite it? [y/n]')
+				select = input()
+				os.system('clear')
+				if select != 'y':
+					message = 'Exited, no action taken.'; print(message)
+					return {'status': 400, 'message': message}
+		else:
+			outpath = self.get_lib_path('compiled')
 
-		#sudo docker version
-		#sudo docker images
-		#sudo docker build -t libsecp-builder .
-		#sudo docker run -it --rm -v "`pwd`/build:/libsecp/compiled" --name libsecp-builder-instance libsecp-builder
-		#sudo docker run hello-docker
-		print(DockerHelper.build(self.get_lib_path('docker'), '-t libsecp-builder'))
+		if isdir(outpath) == False:
+			os.system('clear')
+			message = 'Error: Invalid output path, no action taken.'; print(message)
+			return {'status': 400, 'message': message}
 
-	def load_library(self):
-		if sys.platform in ('windows','win32', 'win64'):
-			library_paths = (self.win32(), 'libsecp256k1-0.dll')
-		elif sys.platform in ():
-			library_paths = (self.win64(), 'libsecp256k1-0.dll')
+		dockerpath = self.get_lib_path('docker')
+		docker_build = Docker.exec('docker build', '-t', 'libsecp-builder', dockerpath)
+		if docker_build['status'] != 200:
+			os.system('clear')
+			print(docker_build['message'])
+			print(docker_build['errcode'])
+			return {'status': 400, 'message': docker_build['message']}
+
+		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/libsecp/compiled'.format(outpath), '--name', 'libsecp-builder-instance')
+		if docker_run['status'] != 200:
+			os.system('clear')
+			print(docker_run['message'])
+			print(docker_run['errcode'])
+			return {'status': 400, 'message': docker_run['message']}
+
+	def load_library(self) -> dict:
+		if sys.platform in ('windows', 'win32') and platform.architecture()[0] == '32bit':
+			library_paths = (self.win32bit(), 'libsecp256k1-0.dll')
+		elif sys.platform in ('windows', 'win32') and platform.architecture()[0] == '64bit':
+			library_paths = (self.win64bit(), 'libsecp256k1-0.dll')
 		else:
 			library_paths = (self.unix(), 'libsecp256k1.so.0')
 
@@ -70,9 +100,9 @@ class Libsecp265k1:
 			else:
 				break
 		if not secp256k1:
-			print(f'libsecp256k1 library failed to load. exceptions: {repr(exceptions)}')
-			return None
-
+			return {'status': 400,
+				'message': 'Error: libsecp256k1 library load failed, '.format(repr(exceptions)),
+				'data': None}
 		try:
 			secp256k1.secp256k1_context_create.argtypes = [c_uint]
 			secp256k1.secp256k1_context_create.restype = c_void_p
@@ -124,16 +154,16 @@ class Libsecp265k1:
 				secp256k1.secp256k1_ecdsa_recoverable_signature_parse_compact.argtypes = [c_void_p, c_char_p, c_char_p, c_int]
 				secp256k1.secp256k1_ecdsa_recoverable_signature_parse_compact.restype = c_int
 			except (OSError, AttributeError):
-				raise LibModuleMissing('libsecp256k1 library found but it was built '
-									   'without required module (--enable-module-recovery)')
+				return {'status': 400,
+					'message': 'Error: Invalid libsecp256k1, missing required modules (--enable-module-recovery)',
+					'data': None}
 
 			secp256k1.ctx = secp256k1.secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY)
 			ret = secp256k1.secp256k1_context_randomize(secp256k1.ctx, os.urandom(32))
-			if not ret:
-				print('secp256k1_context_randomize failed')
-				return None
-
-			return secp256k1
+			if ret:
+				return {'status': 200, 'message': 'Load libsecp256k1 complete.', 'data': secp256k1}
+			else:
+				return {'status': 400, 'message': 'Error: secp256k1_context_randomize failed', 'data': secp256k1}
 		except (OSError, AttributeError) as e:
-			print(f'libsecp256k1 library was found and loaded but there was an error when using it: {repr(e)}')
-			return None
+			return {'status': 400,
+				'message': 'Error: Failed to use libsecp256k1, {}'.format(repr(e)), 'data': None}

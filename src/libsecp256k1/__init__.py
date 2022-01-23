@@ -1,6 +1,6 @@
 # This exports package resources so that anyone can use in their own projects.
 __all__ = [
-	'Libsecp265k1', 'LibModuleMissing',
+	'Libsecp265k1',
 	'SECP256K1_FLAGS_TYPE_MASK', 'SECP256K1_FLAGS_TYPE_CONTEXT',
 	'SECP256K1_FLAGS_TYPE_COMPRESSION', 'SECP256K1_FLAGS_BIT_CONTEXT_VERIFY',
 	'SECP256K1_FLAGS_BIT_CONTEXT_SIGN', 'SECP256K1_FLAGS_BIT_COMPRESSION',
