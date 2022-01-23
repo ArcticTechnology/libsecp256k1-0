@@ -40,44 +40,36 @@ class Libsecp265k1:
 	def win64bit(self) -> str:
 		return self.get_lib_path('compiled/win64bit/libsecp256k1-0.dll')
 
-	def docker_compile(self, interactive: bool = False) -> dict:
-		if interactive == True:
-			os.system('clear')
+	def docker_compile(self, outpath: str = None, interactive: bool = False) -> dict:
+		if outpath == None:
+			compiledpath = self.get_lib_path('compiled')
+		else:
+			if isdir(outpath) == False:
+				message = 'Error: Invalid output path, no action taken.'; print(message)
+				return {'status': 400, 'message': message}
+			else:
+				compiledpath = Crawler.joinpath(outpath, 'compiled')
+
+		if interactive == True and isdir(compiledpath):
 			print(' ')
-			print('What directory do you want docker to compile to?')
-			outpath = input()
-			if outpath == '':
-				os.system('clear')
+			print('Existing docker compile found: {}'.format(compiledpath))
+			print(' ')
+			print('Would you like to overwrite this file? [y/n]')
+			select = input()
+			os.system('clear')
+			if select != 'y':
 				message = 'Exited, no action taken.'; print(message)
 				return {'status': 400, 'message': message}
-			compiledpath = Crawler.joinpath(outpath, 'compiled')
-			if isdir(compiledpath):
-				print(' ')
-				print('Compiled directory would you like to overwrite it? [y/n]')
-				select = input()
-				os.system('clear')
-				if select != 'y':
-					message = 'Exited, no action taken.'; print(message)
-					return {'status': 400, 'message': message}
-		else:
-			outpath = self.get_lib_path('compiled')
-
-		if isdir(outpath) == False:
-			os.system('clear')
-			message = 'Error: Invalid output path, no action taken.'; print(message)
-			return {'status': 400, 'message': message}
 
 		dockerpath = self.get_lib_path('docker')
 		docker_build = Docker.exec('docker build', '-t', 'libsecp-builder', dockerpath)
 		if docker_build['status'] != 200:
-			os.system('clear')
 			print(docker_build['message'])
 			print(docker_build['errcode'])
 			return {'status': 400, 'message': docker_build['message']}
 
-		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/libsecp/compiled'.format(outpath), '--name', 'libsecp-builder-instance')
+		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/libsecp/compiled'.format(compiledpath), '--name', 'libsecp-builder-instance')
 		if docker_run['status'] != 200:
-			os.system('clear')
 			print(docker_run['message'])
 			print(docker_run['errcode'])
 			return {'status': 400, 'message': docker_run['message']}
