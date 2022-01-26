@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
-COPY . /home/libsecp
-WORKDIR /home/libsecp
+COPY . /home/ubuntu/libsecp256k1
+WORKDIR /home/ubuntu/libsecp256k1
 
 RUN bash ./require.sh && rm -rf /var/lib/apt/list/*
 RUN ["chmod", "+x", "compiler.sh"]

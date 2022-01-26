@@ -42,25 +42,26 @@ class Libsecp265k1:
 
 	def docker_compile(self, outpath: str = None, interactive: bool = False) -> dict:
 		if outpath == None:
-			compiledpath = self.get_lib_path('compiled')
+			mountpath = self.get_lib_path('compiled')
 		else:
 			if isdir(outpath) == False:
 				message = 'Error: Invalid output path, no action taken.'; print(message)
 				return {'status': 400, 'message': message}
 			else:
-				compiledpath = Crawler.joinpath(outpath, 'compiled')
+				mountpath = Crawler.joinpath(outpath, 'compiled')
 
-		if interactive == True and isdir(compiledpath):
+		if interactive == True and isdir(mountpath):
 			print(' ')
-			print('Existing docker compile found: {}'.format(compiledpath))
+			print('Existing output path found: {}'.format(mountpath))
 			print(' ')
-			print('Would you like to overwrite this file? [y/n]')
+			print('Would you like to overwrite this? [y/n]')
 			select = input()
 			os.system('clear')
 			if select != 'y':
 				message = 'Exited, no action taken.'; print(message)
 				return {'status': 400, 'message': message}
 
+		print('Building docker environment.....')
 		dockerpath = self.get_lib_path('docker')
 		docker_build = Docker.exec('docker build', '-t', 'libsecp-builder', dockerpath)
 		if docker_build['status'] != 200:
@@ -68,13 +69,15 @@ class Libsecp265k1:
 			print(docker_build['errcode'])
 			return {'status': 400, 'message': docker_build['message']}
 
-		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/libsecp/compiled'.format(compiledpath),
+		print('Compiling libsecp256k1 with docker.....')
+		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/home/ubuntu/libsecp256k1'.format(mountpath),
 								'--name', 'libsecp-builder-instance', 'libsecp-builder')
 		if docker_run['status'] != 200:
 			print(docker_run['message'])
 			print(docker_run['errcode'])
 			return {'status': 400, 'message': docker_run['message']}
 		else:
+			print('Successfully compiled libsecp256k1 to {}'.format(mountpath))
 			return {'status': 200, 'message': docker_run['message']}
 
 	def load_library(self) -> dict:
