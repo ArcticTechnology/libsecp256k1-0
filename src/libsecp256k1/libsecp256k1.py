@@ -68,11 +68,14 @@ class Libsecp265k1:
 			print(docker_build['errcode'])
 			return {'status': 400, 'message': docker_build['message']}
 
-		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/libsecp/compiled'.format(compiledpath), '--name', 'libsecp-builder-instance')
+		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{}:/libsecp/compiled'.format(compiledpath),
+								'--name', 'libsecp-builder-instance', 'libsecp-builder')
 		if docker_run['status'] != 200:
 			print(docker_run['message'])
 			print(docker_run['errcode'])
 			return {'status': 400, 'message': docker_run['message']}
+		else:
+			return {'status': 200, 'message': docker_run['message']}
 
 	def load_library(self) -> dict:
 		if sys.platform in ('windows', 'win32') and platform.architecture()[0] == '32bit':
