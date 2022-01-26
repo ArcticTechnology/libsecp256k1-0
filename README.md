@@ -49,6 +49,10 @@ You can also access the compiler in the package resources. Here you have the opt
 from libsecp256k1 import *
 Libsecp265k1.docker_compile(outpath='/home/example')
 ```
+You can run the compiler from Linux without docker by calling the "local_compiler.sh" file. This will automatically compile to your working directory.
+```
+./local_compiler.sh
+```
 
 ## Troubleshooting
 This section goes over some of the common issues found and how to resolve them.

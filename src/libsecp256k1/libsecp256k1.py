@@ -66,9 +66,14 @@ class Libsecp265k1:
 		return self.get_lib_path('compiled/win64bit/libsecp256k1-0.dll')
 
 	@classmethod
-	def docker_compile(self, outpath: str = None, interactive: bool = False) -> dict:
+	def docker_compile(self, outpath: str = None, interactive: bool = False, sudo: bool = False) -> dict:
 		dockerhome = '/home/ubuntu/libsecp256k1'
 		dockercompiled = Crawler.joinpath(dockerhome, 'compiled')
+		if sudo == True:
+			prefix = 'sudo '
+		else:
+			prefix = ''
+
 		if outpath == None:
 			mountpath = self.get_lib_path('compiled')
 		else:
@@ -91,14 +96,14 @@ class Libsecp265k1:
 
 		print('Building docker environment.....')
 		dockerpath = self.get_lib_path('docker')
-		docker_build = Docker.exec('docker build', '-t', 'libsecp-builder', dockerpath)
+		docker_build = Docker.exec('{}docker build'.format(prefix), '-t', 'libsecp-builder', dockerpath)
 		if docker_build['status'] != 200:
 			print(docker_build['message'])
 			print(docker_build['errcode'])
 			return {'status': 400, 'message': docker_build['message']}
 
 		print('Compiling libsecp256k1 with docker.....')
-		docker_run = Docker.exec('docker run', '-it', '--rm', '-v', '{m}:{d}'.format(m=mountpath,d=dockercompiled),
+		docker_run = Docker.exec('{}docker run'.format(prefix), '-it', '--rm', '-v', '{m}:{d}'.format(m=mountpath,d=dockercompiled),
 								'--name', 'libsecp-builder-instance', 'libsecp-builder')
 		if docker_run['status'] != 200:
 			print(docker_run['message'])
