@@ -1,3 +1,24 @@
+# Libsecp256k1-0
+# Copyright (c) 2022 Arctic Technology LLC
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import os
 import sys
 import ctypes
@@ -28,18 +49,23 @@ SECP256K1_EC_UNCOMPRESSED = (SECP256K1_FLAGS_TYPE_COMPRESSION)
 
 class Libsecp265k1:
 
+	@classmethod
 	def get_lib_path(self, filepath: str) -> str:
 		return Crawler.joinpath(os.path.dirname(__file__), filepath)
 
+	@classmethod
 	def unix(self) -> str:
 		return self.get_lib_path('compiled/unix/libsecp256k1.so.0')
 
+	@classmethod
 	def win32bit(self) -> str:
 		return self.get_lib_path('compiled/win32bit/libsecp256k1-0.dll')
 
+	@classmethod
 	def win64bit(self) -> str:
 		return self.get_lib_path('compiled/win64bit/libsecp256k1-0.dll')
 
+	@classmethod
 	def docker_compile(self, outpath: str = None, interactive: bool = False) -> dict:
 		dockerhome = '/home/ubuntu/libsecp256k1'
 		dockercompiled = Crawler.joinpath(dockerhome, 'compiled')
@@ -84,6 +110,7 @@ class Libsecp265k1:
 			print(' ')
 			return {'status': 200, 'message': docker_run['message']}
 
+	@classmethod
 	def load_library(self) -> dict:
 		if sys.platform in ('windows', 'win32') and platform.architecture()[0] == '32bit':
 			library_paths = (self.win32bit(), 'libsecp256k1-0.dll')
@@ -103,7 +130,7 @@ class Libsecp265k1:
 				break
 		if not secp256k1:
 			return {'status': 400,
-				'message': 'Error: libsecp256k1 library load failed, '.format(repr(exceptions)),
+				'message': 'Error: Failed to load libsecp256k1 library. {}'.format(repr(exceptions)),
 				'data': None}
 		try:
 			secp256k1.secp256k1_context_create.argtypes = [c_uint]
@@ -165,7 +192,16 @@ class Libsecp265k1:
 			if ret:
 				return {'status': 200, 'message': 'Load libsecp256k1 complete.', 'data': secp256k1}
 			else:
-				return {'status': 400, 'message': 'Error: secp256k1_context_randomize failed', 'data': secp256k1}
+				return {'status': 400, 'message': 'Error: Failed to secure libsecp256k1.', 'data': secp256k1}
 		except (OSError, AttributeError) as e:
 			return {'status': 400,
-				'message': 'Error: Failed to use libsecp256k1, {}'.format(repr(e)), 'data': None}
+				'message': 'Error: Failed to use libsecp256k1. {}'.format(repr(e)), 'data': None}
+
+class Secp265k1:
+
+	_load = Libsecp265k1.load_library()
+	if _load['status'] == 200:
+		_libsecp265k1 = _load['data']
+	else:
+		_libsecp265k1 = None
+		sys.exit(_load['message'])
