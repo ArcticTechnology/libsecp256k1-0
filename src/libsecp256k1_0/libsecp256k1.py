@@ -47,7 +47,7 @@ SECP256K1_CONTEXT_NONE = (SECP256K1_FLAGS_TYPE_CONTEXT)
 SECP256K1_EC_COMPRESSED = (SECP256K1_FLAGS_TYPE_COMPRESSION | SECP256K1_FLAGS_BIT_COMPRESSION)
 SECP256K1_EC_UNCOMPRESSED = (SECP256K1_FLAGS_TYPE_COMPRESSION)
 
-class Libsecp265k1:
+class Libsecp256k1:
 
 	@classmethod
 	def get_lib_path(self, filepath: str) -> str:
@@ -202,11 +202,11 @@ class Libsecp265k1:
 			return {'status': 400,
 				'message': 'Error: Failed to use libsecp256k1. {}'.format(repr(e)), 'data': None}
 
-class Secp265k1:
+class Secp256k1:
 
-	_load = Libsecp265k1.load_library()
+	_load = Libsecp256k1.load_library()
 	if _load['status'] == 200:
-		_libsecp265k1 = _load['data']
+		_libsecp256k1 = _load['data']
 	else:
-		_libsecp265k1 = None
+		_libsecp256k1 = None
 		sys.exit(_load['message'])

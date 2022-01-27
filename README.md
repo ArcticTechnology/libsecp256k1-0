@@ -26,7 +26,7 @@ pip3 install -e .
 ## Usage
 After installation, you can simply import the package resources and use them in your own project:
 ```
-from libsecp256k1 import *
+from libsecp256k1_0 import *
 ```
 Once imported, you should be able to all the modules in the package. For example, this is how you verify ecdsa with secp256k1:
 ```
@@ -46,8 +46,8 @@ python3 -m libsecp-compile
 ```
 You can also access the compiler in the package resources. Here you have the option to specify where you want the compiled files to output to.
 ```
-from libsecp256k1 import *
-Libsecp265k1.docker_compile(outpath='/home/example')
+from libsecp256k1_0 import Libsecp256k1
+Libsecp256k1.docker_compile(outpath='/home/example')
 ```
 You can run the compiler from Linux without docker by calling the "local_compiler.sh" file. This will automatically compile to your working directory.
 ```
