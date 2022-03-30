@@ -36,20 +36,21 @@ Secp256k1._libsecp256k1.secp256k1_ecdsa_verify(<ctx>, <sig>, <msg_hash>, <pubkey
 ## Compile
 You can use the dockerized compiler of this package to compile libsecp256k1 for yourself. The compiler builds directly from this source: https://github.com/bitcoin-core/secp256k1.git. It is recommended that you build libsecp256k1 for yourself that way you don't need to put your trust the pre-compiled versions in this package or any other versions of libsecp256k1. By default, running the compiler will overwrite the pre-compiled modules with the newly compiled ones. In order to use the compiler you will need to have Docker (version >= 20.10.7), see "Instructions for Docker" section for more details.
 
-To run the compiler simply use the following command:
+There are a couple ways you can run the compiler:
+* The simplest is to use the following command in Docker:
 ```
 libsecp-compile
 ```
-You can also run it with the python command ```python3 -m```:
+* You can also run it with the python command ```python3 -m```:
 ```
 python3 -m libsecp-compile
 ```
-You can also access the compiler in the package resources. Here you have the option to specify where you want the compiled files to output to.
+* You can also access the compiler in the package resources. Here you have the option to specify where you want the compiled files to output to.
 ```
 from libsecp256k1_0 import Libsecp256k1
 Libsecp256k1.docker_compile(outpath='/home/example')
 ```
-You can run the compiler from Linux without docker by calling the "local_compiler.sh" file. This will automatically compile to your working directory.
+* You can also run the compiler from a Linux terminal without Docker by calling the "local_compiler.sh" file. This will automatically compile to your working directory.
 ```
 ./local_compiler.sh
 ```
