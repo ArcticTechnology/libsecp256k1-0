@@ -1,5 +1,5 @@
-# Dircrawler
-# Copyright (c) 2022 Arctic Technology LLC
+# Dir Crawler
+# Copyright (c) 2023 Arctic Technology
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +19,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os;
+import os
 from os.path import isfile, isdir, join, abspath
 
 class Crawler:
 
 	@classmethod
-	def stdpath(self, path):
+	def stdpath(self, path: str) -> str:
 		platform = os.name
 		if platform == 'nt':
 			result = abspath(path).replace('\\','/')
@@ -35,7 +35,7 @@ class Crawler:
 			return abspath(path)
 
 	@classmethod
-	def joinpath(self, path, filename):
+	def joinpath(self, path: str, filename: str) -> str:
 		platform = os.name
 		if platform == 'nt':
 			result = abspath(join(path,filename)).replace('\\','/')
@@ -45,20 +45,20 @@ class Crawler:
 			return abspath(join(path, filename))
 
 	@classmethod
-	def get_filenm(self, path):
+	def get_filenm(self, path: str) -> str:
 		result = self.stdpath(path)
 		return result.split('/')[-1]
 
 	@classmethod
-	def get_prefix(self, filepath):
+	def get_prefix(self, filepath: str) -> str:
 		return os.path.splitext(filepath)[0]
 
 	@classmethod
-	def get_extension(self, filepath):
+	def get_extension(self, filepath: str) -> str:
 		return os.path.splitext(filepath)[-1]
 
 	@classmethod
-	def get_folders(self, wd, fix=True):
+	def get_folders(self, wd: str, fix=True) -> list:
 
 		dpaths = []
 
@@ -75,7 +75,7 @@ class Crawler:
 		return dpaths
 
 	@classmethod
-	def get_files(self, wd, extension=None, fix=True):
+	def get_files(self, wd: str, extension=None, fix=True) -> list:
 
 		filepaths = []
 
