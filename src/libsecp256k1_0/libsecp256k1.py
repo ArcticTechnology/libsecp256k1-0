@@ -66,6 +66,10 @@ class Libsecp256k1:
 		return self.get_lib_path('compiled/win64bit/libsecp256k1-0.dll')
 
 	@classmethod
+	def darwin(self) -> str:
+		return self.get_lib_path('compiled/darwin/libsecp256k1.0.dylib')
+
+	@classmethod
 	def docker_compile(self, outpath: str = None, interactive: bool = False, sudo: bool = False) -> dict:
 		dockerhome = '/home/ubuntu/libsecp256k1'
 		dockercompiled = Crawler.joinpath(dockerhome, 'compiled')
@@ -121,6 +125,8 @@ class Libsecp256k1:
 			library_paths = (self.win32bit(), 'libsecp256k1-0.dll')
 		elif sys.platform in ('windows', 'win32') and platform.architecture()[0] == '64bit':
 			library_paths = (self.win64bit(), 'libsecp256k1-0.dll')
+		elif sys.platform in ('darwin'):
+			library_paths = (self.darwin(), 'libsecp256k1.0.dylib')
 		else:
 			library_paths = (self.unix(), 'libsecp256k1.so.0')
 

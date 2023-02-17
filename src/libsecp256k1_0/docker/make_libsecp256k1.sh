@@ -65,7 +65,6 @@ info "Building $pkgname..."
 	git checkout "${LIBSECP_VERSION}^{commit}"
 
 	if ! [ -x configure ] ; then
-		echo "libsecp256k1_la_LDFLAGS = -no-undefined" >> Makefile.am
 		echo "LDFLAGS = -no-undefined" >> Makefile.am
 		./autogen.sh || fail "Could not run autogen for $pkgname. Please make sure you have automake and libtool installed, and try again."
 	fi
@@ -82,7 +81,7 @@ info "Building $pkgname..."
 			--disable-static \
 			--enable-shared || fail "Could not configure $pkgname. Please make sure you have a C compiler installed and try again."
 	fi
-	make -j4 || fail "Could not build $pkgname"
+	make "-j$CPU_COUNT" || fail "Could not build $pkgname"
 	make install || fail "Could not install $pkgname"
 	. "$DIST/$pkgname/lib/libsecp256k1.la"
 	host_strip "$DIST/$pkgname/lib/$dlname"
