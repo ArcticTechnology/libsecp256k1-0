@@ -1,6 +1,6 @@
 # Libsecp256k1-0
 
-This is a compiled libsecp256k1 python package that allows you to use secp256k1 in your python projects. Secp256k1 is an optimized C library for ECDSA signatures and secret/public key operations. This library is intended to be the highest quality publicly available library for cryptography on the secp256k1 curve. See this for more details on secp256k1: https://github.com/bitcoin-core/secp256k1. Libsecp256k1-0 contains the pre-compiled modules of secp256k1 compatible for multiple platforms (unix, windows 32 and 64 bits). Most importantly, you can use the dockerized compiler in this package to compile these modules directly from source. That way you don't need to put your trust the pre-compiled versions in this package or anyone else's versions of libsecp256k1.
+This is a compiled libsecp256k1 python package that allows you to use secp256k1 in your python projects. Secp256k1 is an optimized C library for ECDSA signatures and secret/public key operations. This library is intended to be the highest quality publicly available library for cryptography on the secp256k1 curve. See this for more details on secp256k1: https://github.com/bitcoin-core/secp256k1. Libsecp256k1-0 contains the precompiled modules of secp256k1 compatible for multiple platforms (unix, windows 32 and 64 bits). Most importantly, you can use the dockerized compiler in this package to compile these modules directly from source. That way you don't need to put your trust the precompiled versions in this package or anyone else's versions of libsecp256k1.
 * Github repo: https://github.com/ArcticTechnology/libsecp256k1-0
 * PyPi: https://pypi.org/project/libsecp256k1-0/
 
@@ -9,7 +9,7 @@ This is a compiled libsecp256k1 python package that allows you to use secp256k1 
 * Pip3 (version >= 23.0) - Python3 should come with pip3. Check version with: ```pip3 --version```
 * Docker (version >= 20.10.7) - Docker is only required if you wish to use the compiler in this package to compile libsecp256k1 for yourself.
 * Linux or Windows - This application works out of the box for Linux and is compatible with Windows.
-* MacOS - This application works for MacOS using the pre-compiled binary that comes with the app. However, this app is not able compile a new binary for MacOS. If you wish to compile your own, the Electrum wallet has a compiler that can be used. The simpliest way is to install the Electrum wallet and access the ```libsecp256k1.0.dylib``` binary file located in the app: ```~/Applications/Electrum.app/Contents/MacOS/libsecp256k1.0.dylib```. Then replace the ```../compiled/darwin/libsecp256k1.0.dylib``` file with your new binary.
+* MacOS - This application works for MacOS using the precompiled binary that comes with the app. However, this app is not able compile a new binary for MacOS. If you wish to compile your own, the Electrum wallet has a compiler that can be used. The simpliest way is to install the Electrum wallet and access the ```libsecp256k1.0.dylib``` binary file located in the app: ```~/Applications/Electrum.app/Contents/MacOS/libsecp256k1.0.dylib```. Then replace the ```../compiled/darwin/libsecp256k1.0.dylib``` file with your new binary.
 
 ## Installation
 There are a couple of options to install this package:
@@ -23,6 +23,11 @@ git clone https://github.com/ArcticTechnology/libsecp256k1-0.git
 cd libsecp256k1-0
 pip3 install -e .
 ```
+To uninstall this app:
+```
+pip3 uninstall libsecp256k1-0
+```
+* If you used the local install option, you will also want to delete the ```.egg-info``` file located in the ```src/``` directory of the package. This gets created automatically with ```pip3 install -e .```.
 
 ## Usage
 After installation, you can simply import the package resources and use them in your own project:
@@ -35,7 +40,7 @@ Secp256k1._libsecp256k1.secp256k1_ecdsa_verify(<ctx>, <sig>, <msg_hash>, <pubkey
 ```
 
 ## Compile
-You can use the dockerized compiler of this package to compile libsecp256k1 for yourself. The compiler builds directly from this source: https://github.com/bitcoin-core/secp256k1.git. It is recommended that you build libsecp256k1 for yourself that way you don't need to put your trust the pre-compiled versions in this package or any other versions of libsecp256k1. By default, running the compiler will overwrite the pre-compiled modules with the newly compiled ones. In order to use the compiler you will need to have Docker (version >= 20.10.7), see "Instructions for Docker" section for more details.
+You can use the dockerized compiler of this package to compile libsecp256k1 for yourself. The compiler builds directly from this source: https://github.com/bitcoin-core/secp256k1.git. It is recommended that you build libsecp256k1 for yourself that way you don't need to put your trust the precompiled versions in this package or any other versions of libsecp256k1. By default, running the compiler will overwrite the precompiled modules with the newly compiled ones. In order to use the compiler you will need to have Docker (version >= 20.10.7), see "Instructions for Docker" section for more details.
 
 There are a couple ways you can run the compiler:
 * Simply use the following command in Docker:
