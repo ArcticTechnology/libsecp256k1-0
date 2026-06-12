@@ -1,0 +1,74 @@
+[build-system]
+requires = [
+    "setuptools>=61.2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "libsecp256k1-0"
+version = "0.3.0"
+authors = [
+    { name = "ArcticTechnology", email = "arctic.technology.mail@gmail.com" },
+]
+description = "Compiled libsecp256k1 for using ECDSA signatures and secret/public key cryptography in your python projects."
+keywords = [
+    "bitcoin",
+    "cryptography",
+    "ecdsa",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Topic :: Security",
+    "Topic :: Security :: Cryptography",
+]
+requires-python = ">=3.8"
+
+[project.license]
+text = "MIT"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/ArcticTechnology/libsecp256k1-0"
+
+[project.scripts]
+libsecp-compile = "libsecp256k1_0.main:main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = [
+    "src",
+]
+namespaces = false
+
+[tool.setuptools.package-data]
+libsecp256k1_0 = [
+    "compiled/darwin/*.dylib",
+    "compiled/unix/*.so.0",
+    "compiled/win32bit/*.dll",
+    "compiled/win64bit/*.dll",
+    "docker/Dockerfile",
+    "docker/*.sh",
+    "*.sh",
+]
